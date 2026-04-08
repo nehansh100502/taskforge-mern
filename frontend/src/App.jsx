@@ -1,13 +1,14 @@
-import {  } from 'react'
+import {} from "react";
+import Layout from "./Layout";
+import { RouterProvider } from "react-router-dom";
+import { myRoutes } from "./Routes/Router";
 
 function App() {
-
   return (
-  <>
-  <h1>Project managment app</h1>
-  <p>mern stack project</p>
-  </>
-  )
+    <>
+      <RouterProvider router={myRoutes} />
+    </>
+  );
 }
 
-export default App
+export default App;
