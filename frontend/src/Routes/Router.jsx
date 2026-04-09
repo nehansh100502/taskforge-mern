@@ -5,13 +5,26 @@ import UserDashboard from '../pages/user/UserDashboard.jsx'
 import CreateProject from '../pages/user/Projects/CreateProject.jsx'
 import CreateTask from '../components/CreateTask.jsx'
 import InviteMember from '../components/InviteMember.jsx'
+import ProtectedRoute from "../components/ProtectedRoute.jsx";
+import Login from "../pages/auth/Login.jsx";
+import Register from "../pages/auth/Register.jsx";
 
 
 
 export const myRoutes = createBrowserRouter([
+  
+    {
+      path: "/login",
+      element: <Login />,
+    },
+    {
+      path: "/register",  // Add register route
+      element: <Register />,
+    },
+
   {
     path: "/",
-    element: <Layout />,
+    element:  <ProtectedRoute><Layout /></ProtectedRoute>,
     children: [
       { path: "/", element: <UserDashboard/> },
       {path:"/projects/create", element:<CreateProject /> },
