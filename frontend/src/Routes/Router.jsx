@@ -1,17 +1,25 @@
 import { createBrowserRouter } from "react-router-dom";
 
 import Layout from "../Layout";
-import Projects from "../pages/user/Projects/Projects";
+import UserDashboard from '../pages/user/UserDashboard.jsx'
+import CreateProject from '../pages/user/Projects/CreateProject.jsx'
+import CreateTask from '../components/CreateTask.jsx'
+import InviteMember from '../components/InviteMember.jsx'
+
+
 
 export const myRoutes = createBrowserRouter([
   {
     path: "/",
     element: <Layout />,
     children: [
-      { path: "/", element: <h1>Home</h1> },
+      { path: "/", element: <UserDashboard/> },
+      {path:"/projects/create", element:<CreateProject /> },
+      {path:"/tasks/create", element:<CreateTask />},
+    {path:"/team/invite", element:<InviteMember />},
 
       // // Projects
-      { path: "projects", element: <Projects /> },
+      // { path: "projects", element: <Projects /> },
       // { path: "projects/create", element: <CreateProject /> },
       // { path: "projects/my", element: <MyProjects /> },
       // { path: "projects/archived", element: <ArchivedProjects /> },
