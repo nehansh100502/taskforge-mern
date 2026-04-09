@@ -8,29 +8,25 @@ import InviteMember from '../components/InviteMember.jsx'
 import ProtectedRoute from "../components/ProtectedRoute.jsx";
 import Login from "../pages/auth/Login.jsx";
 import Register from "../pages/auth/Register.jsx";
-
+import Logout from "../pages/auth/Logout.jsx";
 
 
 export const myRoutes = createBrowserRouter([
   
-    {
-      path: "/login",
-      element: <Login />,
-    },
-    {
-      path: "/register",  // Add register route
-      element: <Register />,
-    },
+  { path: "/login", element: <Login /> },
+  { path: "/register", element: <Register /> },
+
+  // ✅ Logout OUTSIDE protected
+  { path: "/logout", element: <Logout /> },
 
   {
     path: "/",
-    element:  <ProtectedRoute><Layout /></ProtectedRoute>,
+    element: <ProtectedRoute><Layout /></ProtectedRoute>,
     children: [
-      { path: "/", element: <UserDashboard/> },
-      {path:"/projects/create", element:<CreateProject /> },
-      {path:"/tasks/create", element:<CreateTask />},
-    {path:"/team/invite", element:<InviteMember />},
-
+      { path: "/", element: <UserDashboard /> },
+      { path: "/projects/create", element: <CreateProject /> },
+      { path: "/tasks/create", element: <CreateTask /> },
+      { path: "/team/invite", element: <InviteMember /> },
       // // Projects
       // { path: "projects", element: <Projects /> },
       // { path: "projects/create", element: <CreateProject /> },

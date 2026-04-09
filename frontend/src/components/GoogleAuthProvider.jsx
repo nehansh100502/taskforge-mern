@@ -1,9 +1,7 @@
-// src/components/GoogleAuthProvider.jsx
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
 const GoogleAuthProvider = ({ children }) => {
-  // Replace with your actual Google Client ID
-  const GOOGLE_CLIENT_ID = "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com";
+  const GOOGLE_CLIENT_ID = "944371091767-daab07sktusutf7ujl87vl37e9vsa5k7.apps.googleusercontent.com";
   
   return (
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>

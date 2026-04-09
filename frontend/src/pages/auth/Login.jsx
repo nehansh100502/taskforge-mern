@@ -9,11 +9,59 @@ const Login = () => {
 
   const [error, setError] = useState('');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  // Google login
-  const handleSuccess = (credentialResponse) => {
-    login(credentialResponse);
-    navigate('/');
+  const handleSuccess = async (credentialResponse) => {
+    try {
+      const res = await fetch('http://localhost:8000/api/auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(credentialResponse),
+      });
+  
+      const data = await res.json();
+  
+      if (!res.ok) {
+        setError('Google login failed');
+        return;
+      }
+  
+      login(data);
+      navigate('/');
+    } catch (err) {
+      setError('Server error');
+    }
+  };
+
+  const handleEmailLogin = async (e) => {
+    e.preventDefault();
+  
+    if (!email || !password) {
+      setError('Please enter email and password');
+      return;
+    }
+  
+    try {
+      const res = await fetch('http://localhost:8000/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+  
+      const data = await res.json();
+  
+      if (!res.ok) {
+        setError(data.message || 'Login failed');
+        return;
+      }
+  
+      // Save user (important)
+      login(data);  // assuming your AuthContext stores token
+  
+      navigate('/');
+    } catch (err) {
+      setError('Server error. Try again.');
+    }
   };
 
   const handleError = () => {
@@ -21,26 +69,26 @@ const Login = () => {
   };
 
   // Email login (you can connect API here)
-  const handleEmailLogin = (e) => {
-    e.preventDefault();
+  // const handleEmailLogin = (e) => {
+  //   e.preventDefault();
 
-    if (!email) {
-      setError('Please enter your email');
-      return;
-    }
+  //   if (!email) {
+  //     setError('Please enter your email');
+  //     return;
+  //   }
 
-    // Example: replace with actual API call
-    login({ email });
-    navigate('/');
-  };
+  //   // Example: replace with actual API call
+  //   login({ email });
+  //   navigate('/');
+  // };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="max-w-md w-full space-y-8 bg-white rounded-2xl shadow-xl p-8 transform transition-all duration-500 hover:scale-105">
         
         {/* Header */}
         <div className="text-center">
-          <div className="mx-auto h-16 w-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full flex items-center justify-center mb-4">
+          <div className="mx-auto h-16 w-16 bg-linear-to-r from-blue-600 to-indigo-600 rounded-full flex items-center justify-center mb-4">
             <svg className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
@@ -69,6 +117,13 @@ const Login = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
+          <input
+  type="password"
+  placeholder="Enter your password"
+  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+  value={password}
+  onChange={(e) => setPassword(e.target.value)}
+/>
 
           <button
             type="submit"
