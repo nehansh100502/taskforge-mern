@@ -597,7 +597,6 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import LogoutButton from '../auth/LogoutButton'
 
 const UserDashboard = () => {
   const { user } = useAuth();
@@ -810,7 +809,7 @@ const UserDashboard = () => {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <motion.h1 
-                className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 dark:from-cyan-400 dark:to-blue-400 bg-clip-text text-transparent"
+                className="text-3xl sm:text-4xl font-bold bg-linear-to-r from-cyan-600 to-blue-600 dark:from-cyan-400 dark:to-blue-400 bg-clip-text text-transparent"
                 animate={{ 
                   backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
                 }}
@@ -830,7 +829,7 @@ const UserDashboard = () => {
               >
                 <Link
                   to="/projects/create"
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-lg font-medium shadow-lg hover:shadow-xl transition-shadow"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-linear-to-r from-cyan-500 to-blue-500 text-white rounded-lg font-medium shadow-lg hover:shadow-xl transition-shadow"
                 >
                   <FiPlus size={18} />
                   New Project
@@ -864,7 +863,7 @@ const UserDashboard = () => {
               className={`${stat.bgColor} rounded-2xl p-6 backdrop-blur-sm border border-gray-200 dark:border-gray-800 shadow-lg`}
             >
               <div className="flex items-center justify-between mb-4">
-                <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.color} bg-opacity-20`}>
+                <div className={`p-3 rounded-xl bg-linear-to-br ${stat.color} bg-opacity-20`}>
                   <stat.icon className={`w-6 h-6 ${stat.textColor}`} />
                 </div>
                 <span className={`text-sm font-semibold ${
@@ -954,7 +953,7 @@ const UserDashboard = () => {
                           initial={{ width: 0 }}
                           animate={{ width: `${project.progress}%` }}
                           transition={{ duration: 1, delay: 0.5 }}
-                          className={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-gradient-to-r ${
+                          className={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-linear-to-r ${
                             project.progress >= 70 ? 'from-green-500 to-emerald-500' :
                             project.progress >= 40 ? 'from-cyan-500 to-blue-500' :
                             'from-yellow-500 to-orange-500'
@@ -1060,7 +1059,7 @@ const UserDashboard = () => {
                         initial={{ width: 0 }}
                         animate={{ width: `${metric.value}%` }}
                         transition={{ duration: 1, delay: 0.8 }}
-                        className={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-gradient-to-r ${metric.color}`}
+                        className={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-linear-to-r ${metric.color}`}
                       />
                     </div>
                   </motion.div>
@@ -1134,7 +1133,7 @@ const UserDashboard = () => {
                 to={action.link}
                 className="flex flex-col items-center gap-2 p-4 bg-white dark:bg-gray-900 rounded-xl shadow-md border border-gray-200 dark:border-gray-800 hover:shadow-lg transition-all"
               >
-                <div className={`p-3 rounded-xl bg-gradient-to-br ${action.color} bg-opacity-10`}>
+                <div className={`p-3 rounded-xl bg-linear-to-br ${action.color} bg-opacity-10`}>
                   <action.icon className="w-5 h-5 text-white" />
                 </div>
                 <span className="text-sm font-medium text-gray-700 dark:text-gray-300">

@@ -23,38 +23,64 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+  
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
       return;
     }
-
+  
     if (formData.password.length < 6) {
       setError('Password must be at least 6 characters');
       return;
     }
-
-    // Here you would typically call your backend API
-    // For now, we'll just simulate registration
+  
     try {
-      // const response = await fetch('/api/register', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(formData)
-      // });
-      
-      // For demo purposes, just show success and redirect to login
-      setError('');
-      alert('Registration successful! Please login.');
-      navigate('/login');
+      const res = await fetch('http://localhost:8000/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+  
+      const data = await res.json();
+  
+      if (!res.ok) {
+        setError(data.message || 'Registration failed');
+        return;
+      }
+  
+      // ✅ Auto login after register (better UX)
+      login(data);
+  
+      navigate('/');
     } catch (err) {
-      setError('Registration failed. Please try again.');
+      setError('Server error. Please try again.');
     }
   };
 
-  const handleGoogleSuccess = (credentialResponse) => {
-    login(credentialResponse);
-    navigate('/');
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      const res = await fetch('http://localhost:8000/api/auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(credentialResponse),
+      });
+  
+      const data = await res.json();
+  
+      if (!res.ok) {
+        setError('Google signup failed');
+        return;
+      }
+  
+      login(data);
+      navigate('/');
+    } catch (err) {
+      setError('Server error');
+    }
   };
 
   const handleGoogleError = () => {
