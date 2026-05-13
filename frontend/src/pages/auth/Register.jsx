@@ -53,7 +53,7 @@ const Register = () => {
       }
   
       // ✅ Auto login after register (better UX)
-      login(data);
+      await login(data);
   
       navigate('/');
     } catch (err) {
@@ -76,7 +76,7 @@ const Register = () => {
         return;
       }
   
-      login(data);
+      await login(data);
       navigate('/');
     } catch (err) {
       setError('Server error');

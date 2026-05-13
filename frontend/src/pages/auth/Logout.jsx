@@ -9,36 +9,27 @@ const Logout = () => {
 
   useEffect(() => {
     const doLogout = async () => {
-      const user = JSON.parse(localStorage.getItem('userInfo'));
-
+      const token = localStorage.getItem('tf_token');
       try {
-        await fetch('http://localhost:8000/api/auth/logout', {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${user?.token}`,
-          },
+        await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/auth/logout`, {
+          method: 'DELETE',
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
         });
-
-        // ✅ Success toast
         toast.success('Logged out successfully');
-
       } catch (err) {
         console.error(err);
-
-        // ❌ Error toast
         toast.error('Logout failed');
       }
 
       logout();
 
-      // ⏳ Small delay so toast is visible
       setTimeout(() => {
         navigate('/login');
-      }, 1500);
+      }, 800);
     };
 
     doLogout();
-  }, []);
+  }, [logout, navigate]);
 
   return <p className="text-center mt-10">Logging out...</p>;
 };
