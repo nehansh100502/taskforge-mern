@@ -26,7 +26,7 @@ const Login = () => {
         return;
       }
   
-      login(data);
+      await login(data);
       navigate('/');
     } catch (err) {
       setError('Server error');
@@ -55,9 +55,8 @@ const Login = () => {
         return;
       }
   
-      // Save user (important)
-      login(data);  // assuming your AuthContext stores token
-  
+      await login(data);
+
       navigate('/');
     } catch (err) {
       setError('Server error. Try again.');

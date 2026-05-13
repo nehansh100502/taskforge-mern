@@ -1,8 +1,9 @@
-// src/context/AuthContext.jsx
-import { createContext, useContext, useState, useEffect } from 'react';
-import { jwtDecode } from 'jwt-decode';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import api from '../lib/api';
 
 const AuthContext = createContext();
+
+const TOKEN_KEY = 'tf_token';
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -16,49 +17,63 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // Check if user is logged in from localStorage
-    const token = localStorage.getItem('google_token');
-    if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        // Check if token is expired
-        if (decoded.exp * 1000 > Date.now()) {
-          setUser(decoded);
-        } else {
-          localStorage.removeItem('google_token');
-        }
-      } catch (error) {
-        localStorage.removeItem('google_token');
-      }
-    }
-    setLoading(false);
+  const clearSession = useCallback(() => {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem('google_token');
+    setUser(null);
   }, []);
 
-//   const login = (credentialResponse) => {
-//     const decoded = jwtDecode(credentialResponse.credential);
-//     setUser(decoded);
-//     localStorage.setItem('google_token', credentialResponse.credential);
-//   };
-const login = (data) => {
-    let userData;
-  
-    if (data?.credential) {
-      // Google login
-      userData = jwtDecode(data.credential);
-    } else if (data?.email) {
-      // Email login (manual)
-      userData = { email: data.email };
-    } else {
-      throw new Error("Invalid login data");
+  const loadProfile = useCallback(async () => {
+    const token = localStorage.getItem(TOKEN_KEY);
+    if (!token) {
+      setUser(null);
+      return;
     }
-  
-    setUser(userData);
+    const { data } = await api.get('/api/auth/me');
+    setUser({
+      _id: data._id,
+      id: data._id,
+      name: data.name,
+      email: data.email,
+      role: data.role,
+    });
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      try {
+        await loadProfile();
+      } catch {
+        if (!cancelled) clearSession();
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [clearSession, loadProfile]);
+
+  const login = async (payload) => {
+    if (!payload?.token) {
+      throw new Error('Invalid login data');
+    }
+    localStorage.setItem(TOKEN_KEY, payload.token);
+    setLoading(true);
+    try {
+      await loadProfile();
+    } catch {
+      clearSession();
+      throw new Error('Session could not be established');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const logout = () => {
-    setUser(null);
-    localStorage.removeItem('google_token');
+    clearSession();
   };
 
   return (

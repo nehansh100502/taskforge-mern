@@ -29,6 +29,7 @@ export const registerUser = async (req, res) => {
   
       res.status(201).json({
         _id: user._id,
+        name: user.name,
         email: user.email,
         role: user.role,
         token: generateToken(user._id),
@@ -68,6 +69,7 @@ export const loginUser = async (req, res) => {
       // ✅ Success
       res.json({
         _id: user._id,
+        name: user.name,
         email: user.email,
         role: user.role,
         token: generateToken(user._id),
@@ -89,3 +91,57 @@ export const logoutUser = async (req, res) => {
       res.status(500).json({ message: 'Logout failed' });
     }
   };
+
+export const getMe = async (req, res) => {
+  try {
+    res.json({
+      _id: req.user._id,
+      name: req.user.name,
+      email: req.user.email,
+      role: req.user.role,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+export const googleLogin = async (req, res) => {
+  try {
+    const { credential } = req.body;
+    if (!credential || !process.env.GOOGLE_CLIENT_ID) {
+      return res.status(400).json({ message: 'Google sign-in is not configured' });
+    }
+
+    const ticket = await client.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    if (!payload?.email) {
+      return res.status(400).json({ message: 'Invalid Google token' });
+    }
+
+    const { email, name, sub: googleId } = payload;
+
+    let user = await User.findOne({ $or: [{ email }, { googleId }] });
+    if (!user) {
+      user = await User.create({ email, name: name || email.split('@')[0], googleId });
+    } else {
+      if (!user.googleId) user.googleId = googleId;
+      if (name && !user.name) user.name = name;
+      await user.save();
+    }
+
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      token: generateToken(user._id),
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Google login failed' });
+  }
+};
